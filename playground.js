@@ -71,7 +71,7 @@ This workspace contains examples based on the official Lunex documentation.
 - Download a file or export the workspace as a ZIP archive.
 - Run the active source file with the embedded Lunex WebAssembly runtime.
 
-The browser runner executes source text through the bundled runtime. It does not provide the native Lunex CLI or a project filesystem for resolving @fimport. Multi-file editing and export are available, but running files that import other workspace files requires the native Lunex CLI.
+The browser runner uses the bundled Lunex WebAssembly runtime and resolves @fimport dependencies from this workspace. Imports are resolved relative to each source file, including nested imports.
 
 Official language and CLI documentation: https://github.com/Megamexlevi2/lunex-language` 
 };
@@ -615,13 +615,6 @@ async function runFile(path = activePath) {
     setOutput(['No source code to run.'], 'error');
     return false;
   }
-  if (/@fimport\s*\(/.test(source)) {
-    setOutput([
-      'This file uses @fimport, which requires the native Lunex CLI.',
-      'The browser runtime does not expose a project filesystem for resolving imported files.'
-    ], 'warning');
-    return false;
-  }
   $('runCode').disabled = true;
   $('runCode').innerHTML = '<span class="play-triangle">◌</span><span>Running</span>';
   switchPanel('output');
@@ -636,7 +629,8 @@ async function runFile(path = activePath) {
     console.error = (...values) => captured.push(values.map((value) => typeof value === 'string' ? value : safeOutputValue(value)).join(' '));
     let result;
     try {
-      result = runtime.run(source);
+      if (typeof runtime.runWorkspace !== 'function') throw new Error('This Lunex WebAssembly runtime does not support workspace imports.');
+      result = await runtime.runWorkspace(source, path, Object.fromEntries(files));
     } finally {
       console.log = originalLog;
       console.error = originalError;
@@ -652,8 +646,8 @@ async function runFile(path = activePath) {
     return !isError;
   } catch (error) {
     const detail = error?.message || String(error);
-    setOutput([`Could not start Lunex WebAssembly: ${detail}`, 'Open this site through HTTP or HTTPS and keep the wasm folder beside the page.'], 'error');
-    setSaveStatus('Runtime failed to load', true);
+    setOutput([`Lunex execution failed: ${detail}`], 'error');
+    setSaveStatus('Execution failed', true);
     return false;
   } finally {
     $('runCode').disabled = false;
