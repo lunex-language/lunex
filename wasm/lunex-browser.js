@@ -169,5 +169,10 @@ export async function loadLunex(wasmURL = new URL("./lunex-js.wasm", import.meta
     const project = await collectProject(new URL(url, document.baseURI))
     return runSource(project.source, project)
   }
+  api.runWorkspace = async (source, filename, files) => {
+    if (typeof source !== "string") throw new TypeError("source must be a string")
+    const project = { filename: filename || "main.lx", files: files || {} }
+    return runSource(source, project)
+  }
   return api
 }
