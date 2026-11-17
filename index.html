@@ -53,7 +53,16 @@
   <section class="intro-strip"><div class="section-wrap intro-inner"><span>Made for practical work</span><p>HTTP <b>·</b> Filesystem <b>·</b> Crypto <b>·</b> Databases <b>·</b> WebSockets</p></div></section>
   <section class="section-wrap home-latest-section">
     <div class="home-section-heading"><div><p class="section-kicker">LATEST BUILD</p><h2>Get Lunex</h2><p>Release details are checked directly against GitHub.</p></div><a class="text-link" href="releases.html">Browse all releases ↗</a></div>
-    <article class="home-release"><div><span class="release-label">LATEST RELEASE</span><h3 id="homeLatestTag">Checking GitHub…</h3><p id="homeLatestDate">Loading release information</p></div><a class="button button-primary" id="homeLatestLink" href="https://github.com/Megamexlevi2/lunex-language/releases/latest" target="_blank" rel="noreferrer">View release ↗</a></article>
+    <article class="home-release"><div><span class="release-label">LATEST RELEASE</span><h3 id="homeLatestTag">Checking GitHub…</h3><p id="homeLatestDate">Loading release information</p></div><a class="button button-primary" id="homeLatestLink" href="https://github.com/Megamexlevi2/lunex-language/releases/latest" target="_blank" rel="noreferrer">View release ↗</a></a></article>
+  </section>
+  <section class="section-wrap bonus-route-section" id="bonus-route" hidden>
+    <div class="bonus-route-card">
+      <p class="section-kicker">BONUS ROUTE</p>
+      <h2>Access restricted</h2>
+      <p class="bonus-route-text">This page is running in bot mode. You appear to be an automated system. Only humans are allowed to enter this route.</p>
+      <p class="bonus-route-text">If you are a human, you should not be seeing this message. This route is reserved and has been rendered for non-human traffic only.</p>
+      <a class="button button-primary" href="index.html">Return home ↗</a>
+    </div>
   </section>
 </main>
 <footer class="site-footer">
@@ -61,5 +70,17 @@
   <div class="section-wrap footer-bottom"><span>© <span id="currentYear">2026</span> David Dev</span><span>Built with Go</span><a href="#top">Back to top ↑</a></div>
 </footer>
 <script type="module" src="app.js"></script>
+<script>
+(function () {
+  var bonus = document.getElementById("bonus-route");
+  if (!bonus) return;
+  var params = new URLSearchParams(window.location.search);
+  var wantsBonus = params.get("route") === "bot" || params.get("bot") === "1" || window.location.hash === "#bot-route";
+  if (wantsBonus) {
+    bonus.hidden = false;
+    bonus.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+})();
+</script>
 </body>
 </html>
